@@ -8,7 +8,7 @@ import { Button } from '../components/common/Button';
 import toast from 'react-hot-toast';
 
 export function Wishlist() {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
 
   if (state.wishlist.length === 0) {
     return (
@@ -64,14 +64,27 @@ export function Wishlist() {
               <ProductCard product={product} index={index} />
               <button
                 onClick={() => {
-                  dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: product.id });
+                  dispatch({
+                    type: 'REMOVE_FROM_WISHLIST',
+                    payload: product.id,
+                  });
                   toast.success('Removed from wishlist');
                 }}
                 className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 z-10"
                 title="Remove from wishlist"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>

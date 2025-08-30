@@ -43,6 +43,21 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       transition={{ duration: 0.3, delay: index * 0.1 }}
       className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
     >
+      {/* Wishlist Button OUTSIDE Link */}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleToggleWishlist}
+        className={`absolute top-3 right-3 p-2 rounded-full transition-colors z-20 ${
+          isInWishlist 
+            ? 'bg-red-500 text-white' 
+            : 'bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white'
+        }`}
+        title={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+      >
+        <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-current' : ''}`} />
+      </motion.button>
+
       <Link to={`/product/${product.id}`}>
         <div className="relative overflow-hidden">
           <img
@@ -50,26 +65,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             alt={product.title}
             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          
           {product.originalPrice && (
             <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
               {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
             </div>
           )}
-
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={handleToggleWishlist}
-            className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
-              isInWishlist 
-                ? 'bg-red-500 text-white' 
-                : 'bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white'
-            }`}
-          >
-            <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-current' : ''}`} />
-          </motion.button>
-
           {/* Quick Add to Cart Overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
             <Button
