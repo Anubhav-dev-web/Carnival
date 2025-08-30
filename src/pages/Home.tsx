@@ -41,30 +41,65 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Redesigned Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <svg
+            className="absolute right-0 top-0"
+            width="400"
+            height="400"
+            viewBox="0 0 400 400"
+            fill="none"
+          >
+            <circle
+              cx="200"
+              cy="200"
+              r="200"
+              fill="url(#paint0_radial)"
+              fillOpacity="0.2"
+            />
+            <defs>
+              <radialGradient
+                id="paint0_radial"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientTransform="translate(200 200) scale(200)"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#8B5CF6" />
+                <stop offset="1" stopColor="#3B82F6" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="space-y-6"
+              className="space-y-8"
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                Discover Your
+              <span className="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-2 shadow">
+                Trusted by 10,000+ customers
+              </span>
+              <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4">
+                Elevate Your{' '}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {' '}
-                  Style
+                  Lifestyle
                 </span>
               </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-                Explore our curated collection of premium products designed to
-                elevate your lifestyle.
+              <p className="text-2xl text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                Shop the latest trends, exclusive deals, and premium products.
+                Your journey to a better you starts here.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/shop">
-                  <Button size="lg" className="w-full sm:w-auto group">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto group animate-bounce"
+                  >
                     Shop Now
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -83,14 +118,32 @@ export function Home() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              className="relative flex justify-center items-center"
             >
-              <img
-                src="https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Hero"
-                className="w-full h-96 object-cover rounded-2xl shadow-2xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
+              <div className="relative w-full h-96 flex justify-center items-center">
+                <img
+                  src="https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Hero"
+                  className="w-80 h-80 object-cover rounded-2xl shadow-2xl border-4 border-white dark:border-gray-900"
+                  style={{ zIndex: 2 }}
+                />
+                <img
+                  src="https://images.pexels.com/photos/3769747/pexels-photo-3769747.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Product Collage"
+                  className="absolute left-0 bottom-0 w-32 h-32 object-cover rounded-xl shadow-lg border-2 border-white dark:border-gray-900"
+                  style={{ zIndex: 1 }}
+                />
+                <img
+                  src="https://images.pexels.com/photos/1488463/pexels-photo-1488463.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Product Collage"
+                  className="absolute right-0 top-0 w-24 h-24 object-cover rounded-xl shadow-lg border-2 border-white dark:border-gray-900"
+                  style={{ zIndex: 1 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl" />
+              </div>
+              <span className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full shadow font-semibold text-lg">
+                New Arrivals Just Landed!
+              </span>
             </motion.div>
           </div>
         </div>

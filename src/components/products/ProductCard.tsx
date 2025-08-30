@@ -14,13 +14,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { state, dispatch } = useApp();
-  const isInWishlist = state.wishlist.some(item => item.id === product.id);
+  const isInWishlist = state.wishlist.some((item) => item.id === product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     dispatch({
       type: 'ADD_TO_CART',
-      payload: { product, quantity: 1 }
+      payload: { product, quantity: 1 },
     });
     toast.success('Added to cart!');
   };
@@ -49,8 +49,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         whileTap={{ scale: 0.9 }}
         onClick={handleToggleWishlist}
         className={`absolute top-3 right-3 p-2 rounded-full transition-colors z-20 ${
-          isInWishlist 
-            ? 'bg-red-500 text-white' 
+          isInWishlist
+            ? 'bg-red-500 text-white'
             : 'bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white'
         }`}
         title={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -67,7 +67,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           />
           {product.originalPrice && (
             <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+              {Math.round(
+                ((product.originalPrice - product.price) /
+                  product.originalPrice) *
+                  100
+              )}
+              % OFF
             </div>
           )}
           {/* Quick Add to Cart Overlay */}
