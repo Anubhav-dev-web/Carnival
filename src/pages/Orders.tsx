@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, Calendar, MapPin, ArrowLeft, Eye, Truck, CheckCircle, Clock } from 'lucide-react';
+import {
+  Package,
+  Calendar,
+  MapPin,
+  ArrowLeft,
+  Eye,
+  Truck,
+  CheckCircle,
+  Clock,
+} from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Button } from '../components/common/Button';
 
@@ -35,19 +44,12 @@ interface Order {
 export function Orders() {
   const { state } = useApp();
   const navigate = useNavigate();
-  const [orders, setOrders] = useState<Order[]>([]);
+  // Use orders from context state
+  const orders = state.orders || [];
 
   useEffect(() => {
-    // Check if user is logged in
     if (!state.user) {
       navigate('/auth');
-      return;
-    }
-
-    // Load orders from localStorage
-    const savedOrders = localStorage.getItem(`orders_${state.user.id}`);
-    if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
     }
   }, [state.user, navigate]);
 
@@ -91,7 +93,7 @@ export function Orders() {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -165,13 +167,19 @@ export function Orders() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Package className="w-4 h-4" />
-                          {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                          {order.items.length} item
+                          {order.items.length !== 1 ? 's' : ''}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          order.status
+                        )}`}
+                      >
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
                       </span>
                       {getStatusIcon(order.status)}
                     </div>
@@ -194,8 +202,12 @@ export function Orders() {
                           </h4>
                           <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                             <span>Qty: {item.quantity}</span>
-                            {item.selectedSize && <span>Size: {item.selectedSize}</span>}
-                            {item.selectedColor && <span>Color: {item.selectedColor}</span>}
+                            {item.selectedSize && (
+                              <span>Size: {item.selectedSize}</span>
+                            )}
+                            {item.selectedColor && (
+                              <span>Color: {item.selectedColor}</span>
+                            )}
                           </div>
                         </div>
                         <div className="text-right">
@@ -219,7 +231,9 @@ export function Orders() {
                         <p>{order.shippingAddress.name}</p>
                         <p>{order.shippingAddress.address}</p>
                         <p>
-                          {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+                          {order.shippingAddress.city},{' '}
+                          {order.shippingAddress.state}{' '}
+                          {order.shippingAddress.zipCode}
                         </p>
                         <p>{order.shippingAddress.country}</p>
                       </div>
@@ -232,26 +246,34 @@ export function Orders() {
                       </h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Subtotal:
+                          </span>
                           <span className="text-gray-900 dark:text-white">
                             ${(order.total / 1.08).toFixed(2)}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Tax (8%):</span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Tax (8%):
+                          </span>
                           <span className="text-gray-900 dark:text-white">
-                            ${(order.total / 1.08 * 0.08).toFixed(2)}
+                            ${((order.total / 1.08) * 0.08).toFixed(2)}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Shipping:</span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Shipping:
+                          </span>
                           <span className="text-gray-900 dark:text-white">
                             {order.total > 50 ? 'Free' : '$10.00'}
                           </span>
                         </div>
                         <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
                           <div className="flex justify-between font-medium text-lg">
-                            <span className="text-gray-900 dark:text-white">Total:</span>
+                            <span className="text-gray-900 dark:text-white">
+                              Total:
+                            </span>
                             <span className="text-gray-900 dark:text-white">
                               ${order.total.toFixed(2)}
                             </span>
@@ -268,7 +290,10 @@ export function Orders() {
                         Tracking Information
                       </h4>
                       <p className="text-sm text-blue-700 dark:text-blue-300">
-                        Tracking Number: <span className="font-mono">{order.trackingNumber}</span>
+                        Tracking Number:{' '}
+                        <span className="font-mono">
+                          {order.trackingNumber}
+                        </span>
                       </p>
                     </div>
                   )}

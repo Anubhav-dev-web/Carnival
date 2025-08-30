@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Heart, ShoppingCart, Star, Truck, Shield, RotateCcw } from 'lucide-react';
+import {
+  ArrowLeft,
+  Heart,
+  ShoppingCart,
+  Star,
+  Truck,
+  Shield,
+  RotateCcw,
+} from 'lucide-react';
 import { products } from '../data/products';
 import { useApp } from '../context/AppContext';
 import { Button } from '../components/common/Button';
@@ -9,19 +17,22 @@ import toast from 'react-hot-toast';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { state, dispatch } = useApp();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
 
-  const product = products.find(p => p.id === id);
+  const product = products.find((p) => p.id === id);
 
   if (!product) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Product Not Found</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Product Not Found
+          </h2>
           <Link to="/shop">
             <Button>Back to Shop</Button>
           </Link>
@@ -30,7 +41,7 @@ export function ProductDetail() {
     );
   }
 
-  const isInWishlist = state.wishlist.some(item => item.id === product.id);
+  const isInWishlist = state.wishlist.some((item) => item.id === product.id);
 
   const handleAddToCart = () => {
     if (product.sizes && !selectedSize) {
@@ -48,8 +59,8 @@ export function ProductDetail() {
         product,
         quantity,
         selectedSize,
-        selectedColor
-      }
+        selectedColor,
+      },
     });
     toast.success('Added to cart!');
   };
@@ -62,6 +73,27 @@ export function ProductDetail() {
       dispatch({ type: 'ADD_TO_WISHLIST', payload: product });
       toast.success('Added to wishlist!');
     }
+  };
+
+  const handleBuyNow = () => {
+    if (product.sizes && !selectedSize) {
+      toast.error('Please select a size');
+      return;
+    }
+    if (product.colors && !selectedColor) {
+      toast.error('Please select a color');
+      return;
+    }
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: {
+        product,
+        quantity,
+        selectedSize,
+        selectedColor,
+      },
+    });
+    navigate('/checkout');
   };
 
   return (
@@ -136,12 +168,14 @@ export function ProductDetail() {
                 <button
                   onClick={handleToggleWishlist}
                   className={`p-2 rounded-full transition-colors ${
-                    isInWishlist 
-                      ? 'bg-red-500 text-white' 
+                    isInWishlist
+                      ? 'bg-red-500 text-white'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white'
                   }`}
                 >
-                  <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
+                  <Heart
+                    className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`}
+                  />
                 </button>
               </div>
 
@@ -192,7 +226,7 @@ export function ProductDetail() {
                       Size
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.sizes.map(size => (
+                      {product.sizes.map((size) => (
                         <button
                           key={size}
                           onClick={() => setSelectedSize(size)}
@@ -215,7 +249,7 @@ export function ProductDetail() {
                       Color
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.colors.map(color => (
+                      {product.colors.map((color) => (
                         <button
                           key={color}
                           onClick={() => setSelectedColor(color)}
@@ -258,13 +292,9 @@ export function ProductDetail() {
               </div>
             </div>
 
-            {/* Add to Cart */}
+            {/* Add to Cart & Buy Now */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                onClick={handleAddToCart}
-                className="flex-1"
-                size="lg"
-              >
+              <Button onClick={handleAddToCart} className="flex-1" size="lg">
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Add to Cart - ${(product.price * quantity).toFixed(2)}
               </Button>
@@ -272,6 +302,7 @@ export function ProductDetail() {
                 variant="secondary"
                 size="lg"
                 className="sm:w-auto"
+                onClick={handleBuyNow}
               >
                 Buy Now
               </Button>

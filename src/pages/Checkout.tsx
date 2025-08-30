@@ -22,6 +22,36 @@ export function Checkout() {
     country: 'United States',
   });
 
+  // Auto-fill shipping info from user profile if available
+  React.useEffect(() => {
+    if (state.user) {
+      const savedProfile = localStorage.getItem(`userProfile_${state.user.id}`);
+      if (savedProfile) {
+        const profile = JSON.parse(savedProfile);
+        setShippingAddress((prev) => ({
+          ...prev,
+          name: profile.name || '',
+          email: profile.email || '',
+          phone: profile.phone || '',
+          address: profile.address || '',
+          city: profile.city || '',
+          state: profile.state || '',
+          zipCode: profile.zipCode || '',
+          country: profile.country || 'United States',
+        }));
+      } else {
+        // fallback to basic user info
+        if (state.user) {
+          setShippingAddress((prev) => ({
+            ...prev,
+            name: state.user?.name || '',
+            email: state.user?.email || '',
+          }));
+        }
+      }
+    }
+  }, [state.user]);
+
   const subtotal = state.cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0

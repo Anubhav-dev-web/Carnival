@@ -71,6 +71,24 @@ export function Navbar() {
                 )}
               </Link>
             ))}
+            {state.user && (
+              <Link
+                to="/orders"
+                className={`relative text-sm font-medium transition-colors duration-200 ${
+                  isActive('/orders')
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                }`}
+              >
+                My Orders
+                {isActive('/orders') && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
+                  />
+                )}
+              </Link>
+            )}
           </div>
 
           {/* Actions */}
@@ -186,6 +204,19 @@ export function Navbar() {
                     {item.name}
                   </Link>
                 ))}
+                {state.user && (
+                  <Link
+                    to="/orders"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-3 py-2 text-base font-medium rounded-md transition-colors ${
+                      isActive('/orders')
+                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    My Orders
+                  </Link>
+                )}
               </div>
             </motion.div>
           )}

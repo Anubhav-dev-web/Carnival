@@ -5,17 +5,27 @@ interface AppState {
   cart: CartItem[];
   wishlist: Product[];
   user: User | null;
+  orders: any[];
   darkMode: boolean;
 }
 
 type AppAction =
-  | { type: 'ADD_TO_CART'; payload: { product: Product; quantity: number; selectedSize?: string; selectedColor?: string } }
+  | {
+      type: 'ADD_TO_CART';
+      payload: {
+        product: Product;
+        quantity: number;
+        selectedSize?: string;
+        selectedColor?: string;
+      };
+    }
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_CART_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'ADD_TO_WISHLIST'; payload: Product }
   | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'SET_USER'; payload: User | null }
+  | { type: 'ADD_ORDER'; payload: any }
   | { type: 'LOGOUT' }
   | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'LOAD_PERSISTED_STATE'; payload: Partial<AppState> };
@@ -24,7 +34,8 @@ const initialState: AppState = {
   cart: [],
   wishlist: [],
   user: null,
-  darkMode: false
+  orders: [],
+  darkMode: false,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -32,54 +43,63 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'ADD_TO_CART': {
       const { product, quantity, selectedSize, selectedColor } = action.payload;
       const existingItem = state.cart.find(
-        item => item.id === product.id && 
-        item.selectedSize === selectedSize && 
-        item.selectedColor === selectedColor
+        (item) =>
+          item.id === product.id &&
+          item.selectedSize === selectedSize &&
+          item.selectedColor === selectedColor
       );
 
       if (existingItem) {
         return {
           ...state,
-          cart: state.cart.map(item =>
-            item.id === existingItem.id && 
-            item.selectedSize === selectedSize && 
+          cart: state.cart.map((item) =>
+            item.id === existingItem.id &&
+            item.selectedSize === selectedSize &&
             item.selectedColor === selectedColor
               ? { ...item, quantity: item.quantity + quantity }
               : item
-          )
+          ),
         };
       }
 
       return {
         ...state,
-        cart: [...state.cart, { ...product, quantity, selectedSize, selectedColor }]
+        cart: [
+          ...state.cart,
+          { ...product, quantity, selectedSize, selectedColor },
+        ],
       };
     }
 
     case 'REMOVE_FROM_CART':
       return {
         ...state,
-        cart: state.cart.filter(item => 
-          !(item.id === action.payload || 
-            (item.id + item.selectedSize + item.selectedColor) === action.payload)
-        )
+        cart: state.cart.filter(
+          (item) =>
+            !(
+              item.id === action.payload ||
+              item.id + item.selectedSize + item.selectedColor ===
+                action.payload
+            )
+        ),
       };
 
     case 'UPDATE_CART_QUANTITY':
       return {
         ...state,
-        cart: state.cart.map(item =>
-          (item.id + (item.selectedSize || '') + (item.selectedColor || '')) === action.payload.id
+        cart: state.cart.map((item) =>
+          item.id + (item.selectedSize || '') + (item.selectedColor || '') ===
+          action.payload.id
             ? { ...item, quantity: action.payload.quantity }
             : item
-        )
+        ),
       };
 
     case 'CLEAR_CART':
       return { ...state, cart: [] };
 
     case 'ADD_TO_WISHLIST':
-      if (state.wishlist.find(item => item.id === action.payload.id)) {
+      if (state.wishlist.find((item) => item.id === action.payload.id)) {
         return state;
       }
       return { ...state, wishlist: [...state.wishlist, action.payload] };
@@ -87,22 +107,30 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'REMOVE_FROM_WISHLIST':
       return {
         ...state,
-        wishlist: state.wishlist.filter(item => item.id !== action.payload)
+        wishlist: state.wishlist.filter((item) => item.id !== action.payload),
       };
 
     case 'SET_USER':
-      return { ...state, user: action.payload };
+      if (action.payload) {
+        // Load orders for this user
+        const savedOrders = localStorage.getItem(`orders_${action.payload.id}`);
+        return {
+          ...state,
+          user: action.payload,
+          orders: savedOrders ? JSON.parse(savedOrders) : [],
+        };
+      }
+      return { ...state, user: action.payload, orders: [] };
 
     case 'LOGOUT':
-      // Clear user data and cart/wishlist on logout
-      localStorage.removeItem('currentUser');
+      // Clear cart/wishlist on logout, but keep currentUser for future logins
       localStorage.removeItem(`ecommerce-cart`);
       localStorage.removeItem(`ecommerce-wishlist`);
-      return { 
-        ...state, 
-        user: null, 
-        cart: [], 
-        wishlist: [] 
+      return {
+        ...state,
+        user: null,
+        cart: [],
+        wishlist: [],
       };
 
     case 'TOGGLE_DARK_MODE':
@@ -121,7 +149,7 @@ const AppContext = createContext<{
   dispatch: React.Dispatch<AppAction>;
 }>({
   state: initialState,
-  dispatch: () => {}
+  dispatch: () => {},
 });
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -133,16 +161,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const savedCart = localStorage.getItem('ecommerce-cart');
       const savedWishlist = localStorage.getItem('ecommerce-wishlist');
       const savedDarkMode = localStorage.getItem('ecommerce-darkmode');
-      const savedUser = localStorage.getItem('currentUser') || localStorage.getItem('ecommerce-user');
-
+      const savedUser =
+        localStorage.getItem('currentUser') ||
+        localStorage.getItem('ecommerce-user');
+      let orders = [];
+      let userObj = savedUser ? JSON.parse(savedUser) : null;
+      if (userObj && userObj.id) {
+        const savedOrders = localStorage.getItem(`orders_${userObj.id}`);
+        orders = savedOrders ? JSON.parse(savedOrders) : [];
+      }
       dispatch({
         type: 'LOAD_PERSISTED_STATE',
         payload: {
           cart: savedCart ? JSON.parse(savedCart) : [],
           wishlist: savedWishlist ? JSON.parse(savedWishlist) : [],
           darkMode: savedDarkMode ? JSON.parse(savedDarkMode) : false,
-          user: savedUser ? JSON.parse(savedUser) : null
-        }
+          user: userObj,
+          orders,
+        },
       });
     } catch (error) {
       console.error('Error loading persisted state:', error);
