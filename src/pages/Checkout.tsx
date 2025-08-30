@@ -265,9 +265,16 @@ export function Checkout() {
                       }
                       className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
+                      <option value="India">India</option>
                       <option value="United States">United States</option>
                       <option value="Canada">Canada</option>
                       <option value="United Kingdom">United Kingdom</option>
+                      <option value="Australia">Australia</option>
+                      <option value="Germany">Germany</option>
+                      <option value="France">France</option>
+                      <option value="Singapore">Singapore</option>
+                      <option value="Japan">Japan</option>
+                      <option value="UAE">UAE</option>
                     </select>
                   </div>
                 </div>
